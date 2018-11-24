@@ -277,10 +277,10 @@ const EVENTS: IEvent[] = [
         },
         {
           id: 3,
-          name: "Using Angular with Androids",
-          presenter: "Dan Wahlin",
+          name: 'Using Angular with Androids',
+          presenter: 'Dan Wahlin',
           duration: 3,
-          level: "Advanced",
+          level: 'Advanced',
           abstract: `Androids may do everything for us now, allowing us to spend all day playing
           the latest Destiny DLC, but we can still improve the massages they give and the handmade
           brie they make using Angular 4. This session will show you how.`,
