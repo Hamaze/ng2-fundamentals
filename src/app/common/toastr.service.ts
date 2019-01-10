@@ -1,6 +1,10 @@
-import { Injectable } from '@angular/core'
+import { InjectionToken, Injectable } from '@angular/core'
 
-declare let toastr:any
+declare let toastr: any
+
+// export let TOASTER_TOKEN = new InjectionToken<>('toastr');
+
+
 
 @Injectable()
 export class ToastrService {
