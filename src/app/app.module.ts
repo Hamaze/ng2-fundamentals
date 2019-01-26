@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule, ActivatedRouteSnapshot } from '@angular/router'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { HttpClientModule } from '@angular/common/http'
 
 import {
   EventsListComponent,
@@ -13,22 +14,34 @@ import {
   EventListResolver,
 	CreateSessionComponent,
 	SessionListComponent,
-	DurationPipe
+	DurationPipe,
+	UpvoteComponent,
+	VoterService,
+	LocationValidator
 } from './events/index'
 import { EventsAppComponent } from './events-app.component'
 import { NavBarComponent } from './nav/nav-bar.component'
-import { ToastrService } from './common/toastr.service'
-import { CollapsibleWellComponent } from './common/collapsible-well.component'
+import { JQ_TOKEN,
+	TOASTR_TOKEN,
+	Toastr,
+	CollapsibleWellComponent,
+	SimpleModalComponent,
+	ModalTriggerDirective
+} from './common/index'
 import { appRoutes } from './routes'
 import { Error404Component } from './errors/404.component'
 import { AuthService } from './user/auth.service';
+
+let toastr: Toastr = window['toastr'];
+let jQuery = window['$'];
 
 @NgModule({
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    HttpClientModule,
   ],
   declarations: [
     EventsAppComponent,
@@ -41,14 +54,24 @@ import { AuthService } from './user/auth.service';
     CreateSessionComponent,
 		SessionListComponent,
 		CollapsibleWellComponent,
-		DurationPipe
+		SimpleModalComponent,
+		UpvoteComponent,
+		DurationPipe,
+		ModalTriggerDirective,
+		LocationValidator
   ],
   providers: [
     EventService,
-		ToastrService,
+		{ provide: TOASTR_TOKEN, useValue: toastr },
+		{ provide: JQ_TOKEN, useValue: jQuery },
     EventRouteActivator,
-    EventListResolver,
-    AuthService,
+		EventListResolver,
+		VoterService,
+		AuthService,
+		{
+      provide: 'canDeactivateCreateEvent',
+      useValue: checkDirtyState
+    }
   ],
   bootstrap: [EventsAppComponent]
 })

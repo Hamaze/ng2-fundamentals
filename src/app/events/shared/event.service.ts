@@ -1,18 +1,23 @@
-import { Injectable } from '@angular/core'
-import { Subject, Observable } from 'rxjs/RX'
-import { IEvent } from './event.model';
+import { Injectable, EventEmitter } from '@angular/core'
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { IEvent, ISession } from './event.model';
+import { HttpClient } from '@angular/common/http';
+
 
 @Injectable()
 export class EventService {
-  getEvents(): Observable<IEvent[]> {
-    const subject = new Subject<IEvent[]>()
-    setTimeout(() => {subject.next(EVENTS); subject.complete(); },
-      100)
-    return subject
-  }
+  constructor(private http: HttpClient) {
 
-  getEvent(id: number): IEvent {
-    return EVENTS.find(event => event.id === id)
+  }
+  getEvents(): Observable<IEvent[]> {
+		return this.http.get<IEvent[]>('/api/events')
+			.pipe(catchError(this.handleError<IEvent[]>('getEvents', [])));
+	}
+
+  getEvent(id: number): Observable<IEvent> {
+    return this.http.get<IEvent>('/api/events/' + id)
+			.pipe(catchError(this.handleError<IEvent>('getEvents', [])));
   }
 
   saveEvent(event) {
@@ -24,6 +29,34 @@ export class EventService {
 	updateEvent(event: IEvent) {
 		const index = EVENTS.findIndex(x => x.id === event.id);
 		EVENTS[index] = event;
+	}
+
+	searchSessions(searchTerm: string) {
+		const term = searchTerm.toLocaleLowerCase();
+		let results: ISession[] = [];
+
+		EVENTS.forEach(event => {
+			let matchingSessions = event.sessions.filter(
+				session => session.name.toLocaleLowerCase().indexOf(term) > - 1);
+			matchingSessions = matchingSessions.map((session: any) => {
+				session.eventId = event.id;
+				return session;
+			});
+			results = results.concat(matchingSessions);
+		});
+
+		const emitter = new EventEmitter(true);
+		setTimeout(() => {
+			emitter.emit(results);
+		}, 100);
+		return emitter;
+	}
+
+	private handleError<T> (operation = 'operation', result?: T) {
+		return (error: any): Observable<T> => {
+			console.error(error);
+			return of(result as T);
+		}
 	}
 }
 
