@@ -3,6 +3,7 @@ typings
 /app/**/*.js
 /app/**/*.map
 .vscode/
+dist
 
 
 .DS_Store

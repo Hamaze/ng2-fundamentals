@@ -13,7 +13,7 @@ import { IEvent, EventService } from './shared';
     .error :ms-input-placeholder { color:#999; }
   `]
 })
-export class CreateEventComponent implements OnInit {
+export class CreateEventComponent {
   newEvent
   isDirty = true
   constructor(private router: Router,
@@ -21,28 +21,11 @@ export class CreateEventComponent implements OnInit {
 
   }
 
-  ngOnInit() {
-    // this.event = {
-    //   id: 11,
-    //   name: 'Ng Spectacular',
-    //   date: new Date('8/8/2028'),
-    //   time: '10am',
-    //   price: 799.99,
-    //   location: {
-    //     address: '456 Happy St',
-    //     city: 'Felicity',
-    //     country: 'Angularistan'
-    //   },
-    //   onlineUrl: 'http://ngspectacular.com',
-    //   imageUrl: 'http://ngspectacular.com/logo.png',
-    //   sessions: []
-    // };
-  }
-
   saveEvent(formValues) {
-    this.eventService.saveEvent(formValues);
-    this.isDirty = false;
-    this.router.navigate(['/events'])
+    this.eventService.saveEvent(formValues).subscribe(() => {
+      this.isDirty = false;
+      this.router.navigate(['/events']);
+    });
   }
 
   cancel() {
